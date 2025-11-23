@@ -23,9 +23,18 @@ def get_ai_response(prompt: str) -> str:
         if not API_KEY:
             return "Error: API Key is missing. Check terminal for instructions"
         
+        system_instruction = (
+            "You are a helpful and professional assistant. "
+            "For all detailed or multi-step answers, use markdown formatting. "
+            "Break down long explanations into numbered lists, bullet points, and use **bold** text to highlight key concepts. "
+            "Avoid writing large paragraphs."
+        )
+
+        combined_prompt = system_instruction + prompt
+        
         response = client.models.generate_content(
             model=GEMINI_MODEL,
-            contents=prompt,
+            contents=combined_prompt,
             config={"tools": [{"google_search": {}}]}
         )
         return response.text

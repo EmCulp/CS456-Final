@@ -25,7 +25,7 @@
         .message {
             margin-bottom: 20px; /* Increased margin for separation */
             word-wrap: break-word;
-            line-height: 1.6; /* Improved line spacing */
+            line-height: 2.0; /* Improved line spacing */
             max-width: 80%; /* Messages don't span the full screen width */
         }
         .jarvis-msg {
@@ -81,11 +81,17 @@
             background-color: #0056b3;
         }
         .jarvis-msg strong {
-            color: #00FFFF; /* Bright Cyan for key terms */
+        color: #00FFFF; /* Bright Cyan for key terms */
         }
+        
         .jarvis-msg ul {
-            margin-top: 5px;
-            padding-left: 20px;
+            margin-top: 15px; /* Add space above the list */
+            margin-bottom: 15px;
+            padding-left: 35px;
+            list-style-type: disc;
+        }
+        .jarvis-msg ul li {
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -112,6 +118,27 @@
         // Function to scroll to the bottom of the chat window
         function scrollToBottom() {
             chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function formatMessage(text) {
+            // 1. Convert common markdown to HTML (Strong, Headers)
+            let html = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // **Bold**
+                .replace(/### (.*?)\*\*/g, '<h3>$1</h3>'); // ### Headings
+
+            // 2. Break up content based on list markers or extra line breaks
+            html = html.split('\n\n').map(p => {
+                // Check for list items (starting with a star)
+                if (p.trim().startsWith('*')) {
+                    // If it looks like a list, wrap each line in <li> tags inside a <ul>
+                    let listItems = p.split('*').filter(Boolean).map(item => `<li>${item.trim()}</li>`).join('');
+                    return `<ul>${listItems}</ul>`;
+                }
+                // Otherwise, wrap in a paragraph tag for better spacing
+                return `<p>${p.trim()}</p>`;
+            }).join('');
+
+            return html;
         }
 
         // Function to process and send the user's input
@@ -147,12 +174,18 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    // Re-render the entire history (or just the new message)
-                    // For simplicity, we'll re-render the new ATLAS message
-                    let jarvisMessageDiv = document.createElement('div');
-                    jarvisMessageDiv.className = 'message jarvis-msg';
-                    jarvisMessageDiv.innerHTML = `<span style="font-weight: bold;">ATLAS:</span> ${data.answer}`;
-                    chatWindow.appendChild(jarvisMessageDiv);
+                    // Get the raw text from the AI
+                    const rawAiAnswer = data.answer; 
+
+                    // Use the NEW formatting function before displaying
+                    const formattedAiAnswer = formatMessage(rawAiAnswer);
+
+                    let aiMessageDiv = document.createElement('div');
+                    aiMessageDiv.className = 'message jarvis-msg'; // Using 'jarvis-msg' for CSS style
+                    
+                    // Use the formatted text here
+                    aiMessageDiv.innerHTML = `<span class="speaker-name">ATLAS:</span> ${formattedAiAnswer}`; 
+                    chatWindow.appendChild(aiMessageDiv);
                     
                     scrollToBottom();
                 }
