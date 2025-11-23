@@ -27,7 +27,7 @@ def run_jarvis(visuals):
 
 def start_logic_and_gui(visuals):
     """Initializes the GUI, sets up the update loop, and starts the logic."""
-    
+
     visuals.root.after(GUI_UPDATE_INTERVAL_MS, lambda: visuals.root.after(GUI_UPDATE_INTERVAL_MS, run_jarvis, visuals))
     
     # Start the Tkinter main loop, which blocks and handles all events
@@ -38,10 +38,6 @@ def start_logic_and_gui(visuals):
 
 if __name__ == '__main__':
     jarvis_visuals = JarvisVisuals()
-
-    # logic_thread = threading.Thread(target=run_jarvis, args=(jarvis_visuals,))
-    # logic_thread.daemon = True
-    # logic_thread.start()
 
     try:
         run_jarvis(jarvis_visuals)

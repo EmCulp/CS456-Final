@@ -10,7 +10,7 @@ if not API_KEY:
     print("FATAL ERROR: GEMINI_API_KEY environment variable is NOT set.")
 
 try:
-    client = genai.Client()
+    client = genai.Client(api_key=API_KEY)
     GEMINI_MODEL = 'gemini-2.5-flash'
 except Exception as e:
     print(f"Error initializing Gemini Client: {e}")
@@ -27,7 +27,8 @@ def get_ai_response(prompt: str) -> str:
         
         response = client.models.generate_content(
             model=GEMINI_MODEL,
-            contents=prompt
+            contents=prompt,
+            config={"tools": [{"google_search": {}}]}
         )
         return response.text
     except Exception as e:
