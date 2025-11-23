@@ -3,6 +3,12 @@ import os
 
 # print(f"DEBUG: GEMINI_API_KEY is present: {'GEMINI_API_KEY' in os.environ}")
 
+API_KEY = os.environ.get("GEMINI_API_KEY")
+
+if not API_KEY:
+    # If the key isn't set, print a reminder and use a placeholder
+    print("FATAL ERROR: GEMINI_API_KEY environment variable is NOT set.")
+
 try:
     client = genai.Client()
     GEMINI_MODEL = 'gemini-2.5-flash'
@@ -16,6 +22,9 @@ def get_ai_response(prompt: str) -> str:
         return "I'm sorry, my core intelligence module is offline. Please check my API key."
     
     try:
+        if not API_KEY:
+            return "Error: API Key is missing. Check terminal for instructions"
+        
         response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=prompt
