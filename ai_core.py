@@ -1,8 +1,6 @@
 from google import genai
 import os
 
-# print(f"DEBUG: GEMINI_API_KEY is present: {'GEMINI_API_KEY' in os.environ}")
-
 API_KEY = os.environ.get("GEMINI_API_KEY")
 
 if not API_KEY:

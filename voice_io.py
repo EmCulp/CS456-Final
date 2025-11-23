@@ -22,41 +22,21 @@ def speak_audio_and_cleanup(text_to_speak, visuals):
         return
     
     try:
-        if visuals:
-            visuals.start_speaking_waveform()
-
-        print(f"J.A.R.V.I.S. says: {text_to_speak}")
+        print(f"ATLAS says: {text_to_speak}")
 
         tts_engine.say(text_to_speak)
         tts_engine.runAndWait()
     except Exception as e:
         print(f"RATAL SAPI5 PLAYBACK ERROR: {e}")
-    finally:
-        if visuals:
-            visuals.stop_speaking_waveform()
 
 def speak(text: str, visuals=None):
-    """
-    Simulates speech by printing the response. 
-    This is the guaranteed final working output method.
-    """
-    if visuals:
-        # Still show the waveform animation if visuals are available
-        visuals.start_speaking_waveform()
-        
-    print(f"J.A.R.V.I.S. says: {text}")
-    
-    # Simulate the time it would take to speak for a smooth transition
-    time.sleep(len(text) / 25) 
-    
-    if visuals:
-        visuals.stop_speaking_waveform()
+    pass
 
 def listen_for_input_blocking():
     """Function to run on a dedicated thread to wait for input."""
     try:
         # This is the line that blocks, now safely on its own thread
-        command = input("\nJ.A.R.V.I.S. is listening: ")
+        command = input("\nATLAS is listening: ")
         input_queue.put(command.strip())
     except EOFError:
         input_queue.put("exit")
@@ -66,9 +46,6 @@ def listen_for_input_blocking():
 def listen_for_command(visuals=None) -> str:
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        if visuals:
-            visuals.set_listening_mode(False)
-
         if input_queue.empty():
             # Start a new thread just for the input() call
             input_thread = threading.Thread(target=listen_for_input_blocking)
@@ -76,9 +53,7 @@ def listen_for_command(visuals=None) -> str:
             input_thread.start()
 
         try:
-            command = input("\nJ.A.R.V.I.S. is listening: ")
-            if visuals:
-                visuals.set_listening_mode(False)
+            command = input("\nATLAS is listening: ")
             return command.lower().strip()
         except:
             return ""
